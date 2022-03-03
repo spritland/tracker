@@ -6,27 +6,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Spirit Tracker - Rules</title>
+    <title>Spirit Tracker - Games</title>
     <link rel="icon" type="image/x-icon" href="icon.ico">
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
     <script type="text/javascript">
+        function compareByGameDate(a, b) {
+            if (a.Date < b.Date)
+                return -1;
+            if (a.Date > b.Date)
+                return 1;
+            return 0;
+        }
+
         $.getJSON("https://spritland.github.io/tracker/data.json", function (json) {
             // Set new default font family and font color to mimic Bootstrap's default styling
             Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
             Chart.defaults.global.defaultFontColor = '#292b2c';
 
-            json.Rules.sort(compareByName);
-            var tableContent = "<thead><tr><th>Name</th><th>Times Played</th><th>Win Percentage</th></tr></thead><tbody>";
-            for (var currentRule of json.Rules) {
-                tableContent += "<tr><td>" + currentRule.Name + "</td><td>" + currentRule.TimesPlayed + "</td><td>" + currentRule.WinPercentage + "</td></tr>";
+            json.Games.sort(compareByGameDate);
+            var tableContent = "<thead><tr><th>Date</th><th>Players</th><th>Ghosts</th><th>Ghost Rating</th><th>Rules</th><th>Difficulty</th><th>Won</th><th>Result</th></tr></thead><tbody>";
+            for (var currentGame of json.Games) {
+                var gamePlayersGhosts = [];
+                for (currentEntry of json.GamesPlayersGhosts) {
+                    if (currentEntry.GameId == currentGame.Id) {
+                        gamePlayersGhosts.push(currentEntry);
+                    }
+                }
+
+                var playerTableString = "<table><tbod>";
+                var ghostTableString = "<table><tbod>";
+                var ghostRatingTableString = "<table><tbod>";
+                for (var currentEntry of gamePlayersGhosts) {
+                    for (var currentPlayer of json.Players) {
+                        if (currentEntry.PlayerId == currentPlayer.Id) {
+                            playerTableString += "<tr><td>" + currentPlayer.Name + "</td></tr>";
+                            break;
+                        }
+                    }
+                    for (var currentGhost of json.Ghosts) {
+                        if (currentEntry.GhostId == currentGhost.Id) {
+                            ghostTableString += "<tr><td>" + currentGhost.Name + "</td></tr>";
+                            break;
+                        }
+                    }
+                    ghostRatingTableString += "<tr><td>" + currentEntry.GhostRating + "</td></tr>";
+                }
+                playerTableString += "</tbody></table>";
+                ghostTableString += "</tbody></table>";
+                ghostRatingTableString += "</tbody></table>";
+
+                var rulesTableString = "<table><tbod>";
+                for (var currentEntry of json.GamesRules) {
+                    if (currentEntry.GameId == currentGame.Id) {
+                        for (var currentRule of json.Rules) {
+                            if (currentRule.Id == currentEntry.RuleId) {
+                                rulesTableString += "<tr><td>" + currentRule.Name + "</td></tr>";
+                                break;
+                            }
+                        }
+                    }
+                }
+                rulesTableString += "</tbody></table>";
+
+                var wonText = "False";
+                if (currentGame.Won == 1)
+                    wonText = "True";
+                tableContent += "<tr><td>" + currentGame.Date + "</td><td>" + playerTableString + "</td><td>" + ghostTableString + "</td><td>" + ghostRatingTableString + "</td><td>" + rulesTableString + "</td><td>" + currentGame.Difficulty + "</td><td>" + wonText + "</td><td>" + currentGame.Result + "</td></tr>";
             }
             tableContent += "</tbody>";
-            var rulesTable = document.getElementById("RulesTable");
-            rulesTable.innerHTML = tableContent;
-            new simpleDatatables.DataTable(rulesTable);
+            var gamesTable = document.getElementById("GamesTable");
+            gamesTable.innerHTML = tableContent;
+            new simpleDatatables.DataTable(gamesTable);
         });
     </script>
 </head>
@@ -79,16 +132,15 @@
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Rules</h1>
+                    <h1 class="mt-4">All Games</h1>
                     <h1 class="mt-4"></h1>
                     <div class="row">
                         <div class="card mb-4">
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
-                                Statistics
                             </div>
                             <div class="card-body">
-                                <table id="RulesTable">
+                                <table id="GamesTable">
                                 </table>
                             </div>
                         </div>
