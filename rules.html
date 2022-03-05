@@ -13,21 +13,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
     <script type="text/javascript">
-        $.getJSON("https://spritland.github.io/tracker/data.json", function (json) {
-            // Set new default font family and font color to mimic Bootstrap's default styling
-            Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-            Chart.defaults.global.defaultFontColor = '#292b2c';
-
-            json.Rules.sort(compareByName);
+        function BindSiteData(trackerData) {
+            trackerData.Rules.sort(compareByName);
             var tableContent = "<thead><tr><th>Name</th><th>Times Played</th><th>Win Percentage</th></tr></thead><tbody>";
-            for (var currentRule of json.Rules) {
+            for (var currentRule of trackerData.Rules) {
                 tableContent += "<tr><td>" + currentRule.Name + "</td><td>" + currentRule.TimesPlayed + "</td><td>" + currentRule.WinPercentage + "</td></tr>";
             }
             tableContent += "</tbody>";
             var rulesTable = document.getElementById("RulesTable");
             rulesTable.innerHTML = tableContent;
             new simpleDatatables.DataTable(rulesTable);
-        });
+        }
     </script>
 </head>
 <body class="sb-nav-fixed">
@@ -39,42 +35,6 @@
     </nav>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
-            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-                <div class="sb-sidenav-menu">
-                    <div class="nav">
-                        <div class="sb-sidenav-menu-heading">Statistics</div>
-                        <a class="nav-link" href="index.html">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                            Dashboard
-                        </a>
-                        <a class="nav-link" href="games.html">
-                            <div class="sb-nav-link-icon"><i class="fas fa-dice"></i></div>
-                            Games
-                        </a>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePlayers" aria-expanded="false" aria-controls="collapsePlayers">
-                            <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
-                            Players
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapsePlayers" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                            <nav id="PlayersNavigation" class="sb-sidenav-menu-nested nav">
-                            </nav>
-                        </div>
-                        <a class="nav-link" href="ghosts.html">
-                            <div class="sb-nav-link-icon"><i class="fas fa-ghost"></i></div>
-                            Ghosts
-                        </a>
-                        <a class="nav-link" href="rules.html">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            Rules
-                        </a>
-                        <a class="nav-link" href="difficulties.html">
-                            <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                            Difficulties
-                        </a>
-                    </div>
-                </div>
-            </nav>
         </div>
         <div id="layoutSidenav_content">
             <main>

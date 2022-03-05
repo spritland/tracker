@@ -21,16 +21,12 @@
             return 0;
         }
 
-        $.getJSON("https://spritland.github.io/tracker/data.json", function (json) {
-            // Set new default font family and font color to mimic Bootstrap's default styling
-            Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-            Chart.defaults.global.defaultFontColor = '#292b2c';
-
-            json.Games.sort(compareByGameDate);
+        function BindSiteData(trackerData) {
+            trackerData.Games.sort(compareByGameDate);
             var tableContent = "<thead><tr><th>Date</th><th>Players</th><th>Ghosts</th><th>Ghost Rating</th><th>Rules</th><th>Difficulty</th><th>Won</th><th>Result</th></tr></thead><tbody>";
-            for (var currentGame of json.Games) {
+            for (var currentGame of trackerData.Games) {
                 var gamePlayersGhosts = [];
-                for (currentEntry of json.GamesPlayersGhosts) {
+                for (currentEntry of trackerData.GamesPlayersGhosts) {
                     if (currentEntry.GameId == currentGame.Id) {
                         gamePlayersGhosts.push(currentEntry);
                     }
@@ -40,13 +36,13 @@
                 var ghostTableString = "<table><tbod>";
                 var ghostRatingTableString = "<table><tbod>";
                 for (var currentEntry of gamePlayersGhosts) {
-                    for (var currentPlayer of json.Players) {
+                    for (var currentPlayer of trackerData.Players) {
                         if (currentEntry.PlayerId == currentPlayer.Id) {
                             playerTableString += "<tr><td>" + currentPlayer.Name + "</td></tr>";
                             break;
                         }
                     }
-                    for (var currentGhost of json.Ghosts) {
+                    for (var currentGhost of trackerData.Ghosts) {
                         if (currentEntry.GhostId == currentGhost.Id) {
                             ghostTableString += "<tr><td>" + currentGhost.Name + "</td></tr>";
                             break;
@@ -59,9 +55,9 @@
                 ghostRatingTableString += "</tbody></table>";
 
                 var rulesTableString = "<table><tbod>";
-                for (var currentEntry of json.GamesRules) {
+                for (var currentEntry of trackerData.GamesRules) {
                     if (currentEntry.GameId == currentGame.Id) {
-                        for (var currentRule of json.Rules) {
+                        for (var currentRule of trackerData.Rules) {
                             if (currentRule.Id == currentEntry.RuleId) {
                                 rulesTableString += "<tr><td>" + currentRule.Name + "</td></tr>";
                                 break;
@@ -80,7 +76,7 @@
             var gamesTable = document.getElementById("GamesTable");
             gamesTable.innerHTML = tableContent;
             new simpleDatatables.DataTable(gamesTable);
-        });
+        }
     </script>
 </head>
 <body class="sb-nav-fixed">
@@ -92,42 +88,6 @@
     </nav>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
-            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-                <div class="sb-sidenav-menu">
-                    <div class="nav">
-                        <div class="sb-sidenav-menu-heading">Statistics</div>
-                        <a class="nav-link" href="index.html">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                            Dashboard
-                        </a>
-                        <a class="nav-link" href="games.html">
-                            <div class="sb-nav-link-icon"><i class="fas fa-dice"></i></div>
-                            Games
-                        </a>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePlayers" aria-expanded="false" aria-controls="collapsePlayers">
-                            <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
-                            Players
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapsePlayers" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                            <nav id="PlayersNavigation" class="sb-sidenav-menu-nested nav">
-                            </nav>
-                        </div>
-                        <a class="nav-link" href="ghosts.html">
-                            <div class="sb-nav-link-icon"><i class="fas fa-ghost"></i></div>
-                            Ghosts
-                        </a>
-                        <a class="nav-link" href="rules.html">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            Rules
-                        </a>
-                        <a class="nav-link" href="difficulties.html">
-                            <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                            Difficulties
-                        </a>
-                    </div>
-                </div>
-            </nav>
         </div>
         <div id="layoutSidenav_content">
             <main>
