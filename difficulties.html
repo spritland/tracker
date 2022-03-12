@@ -14,9 +14,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
     <script type="text/javascript">
         function BindSiteData(trackerData) {
-            var tableContent = "<thead><tr><th>Difficulty</th><th>Times Played</th><th>Win Percentage</th></tr></thead><tbody>";
+            var tableContent = "<thead><tr><th>Difficulty</th><th>Times Played</th><th>Win Percentage</th><th>Average Points Total</th><th>Average Points Victories</th><th>Average Points Defeats</th></tr></thead><tbody>";
             for (var currentDifficulty of trackerData.Difficulties) {
-                tableContent += "<tr><td>" + currentDifficulty.Difficulty + "</td><td>" + currentDifficulty.TimesPlayed + "</td><td>" + currentDifficulty.WinPercentage + "</td></tr>";
+                tableContent += "<tr><td>" + currentDifficulty.Difficulty + "</td><td>" + currentDifficulty.TimesPlayed + "</td><td>" + currentDifficulty.WinPercentage + "</td><td>" + currentDifficulty.AveragePointsTotal + "</td><td>" + currentDifficulty.AveragePointsVictory + "</td><td>" + currentDifficulty.AveragePointsDefeat + "</td></tr>";
             }
             tableContent += "</tbody>";
             var difficultiesTable = document.getElementById("DifficultiesTable");
